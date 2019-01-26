@@ -43,7 +43,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
                         is_add ,
                         is_change,
                         is_delete,
-                        operation_date
+                        operation_date,
+                        orderby,
+                        password
                        ) 
                        values(
                         '{operations.Key}',
@@ -53,7 +55,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
                          {operations.IsAdd},
                          {operations.IsChange},
                          {operations.IsDelete},
-                         '{FormatDateTimeToTimestamp(operations.OperationDate)}'
+                         '{FormatDateTimeToTimestamp(operations.OperationDate)}',
+                         {operations.OrderBy},
+                         '{operations.Password}'
                       )";
                     com.ExecuteNonQuery();
                     return true;
@@ -76,7 +80,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
                         is_add ,
                         is_change ,
                         is_delete , 
-                        operation_date
+                        operation_date,
+                        orderby,
+                        password
                         from dewey_users where key like '{key}|%'";
                     OdbcDataReader reader = com.ExecuteReader();
                     //reader.Read();
@@ -107,7 +113,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
                         is_add ,
                         is_change ,
                         is_delete , 
-                        operation_date
+                        operation_date,
+                        orderby ,
+                        password
                         from dewey_users ";
 
                     /*if (isDelete.HasValue)
@@ -153,7 +161,8 @@ namespace Dewey.Dms.FileService.Hbase.Service
                     is_change ,
                     is_clone ,
                     is_delete ,
-                    operation_date )
+                    operation_date ,
+                    orderby)
                     values (
                     '{operations.Key}',
                     '{operations.FileName}',
@@ -163,7 +172,8 @@ namespace Dewey.Dms.FileService.Hbase.Service
                     {operations.IsChange},
                     {operations.IsClone},
                     {operations.IsDelete},
-                    '{FormatDateTimeToTimestamp(operations.OperationDate)}')";
+                    '{FormatDateTimeToTimestamp(operations.OperationDate)}',
+                    {operations.OrderBy} )";
                     com.ExecuteNonQuery();    
                     return true;
                 }
@@ -187,7 +197,8 @@ namespace Dewey.Dms.FileService.Hbase.Service
                     is_change ,
                     is_clone ,
                     is_delete ,
-                    operation_date 
+                    operation_date ,
+                    orderby
                     from
                     dewey_files where key like '{key}|%'";
                     OdbcDataReader reader = com.ExecuteReader();

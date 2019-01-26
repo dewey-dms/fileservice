@@ -90,7 +90,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
         private File(List<FileHistory> history)
         {
             History = history;
-            FileLastHistory = history.Where(a => a.OperationDate == history.Max(b => b.OperationDate)).Single();
+            FileLastHistory = history.Where(a => a.OrderBy == history.Max(b => b.OrderBy)).Single();
         }
        
     }

@@ -28,8 +28,20 @@ namespace Dewey.Dms.FileService.Hbase.Operations
         public bool IsDelete { get; protected set; }
         public bool IsClone { get; protected set; }
         public DateTime OperationDate { get; protected set; }
-        }
+        
+        
+        public long OrderBy { get; private set; }
 
+        public void CreateOrderBy()
+        {
+            OrderBy =  (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+        }
+        
+      }
+
+     
+    
+    
     public class AddFileOperations:FileOperations
     {
         public static AddFileOperations CreateFileOperations(User user, string fileName, string extension)
@@ -46,6 +58,7 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             add.IsClone = false;
             add.IsDelete = false;
             add.OperationDate = DateTime.Now;
+            add.CreateOrderBy();
             return add;
         }
     }
@@ -70,6 +83,7 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             change.IsClone = false;
             change.IsDelete = false;
             change.OperationDate = DateTime.Now;
+            change.CreateOrderBy();
             return change;
         }
 
@@ -109,6 +123,7 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             delete.IsClone = false;
             delete.IsDelete = true;
             delete.OperationDate = DateTime.Now;
+            delete.CreateOrderBy();
             return delete;
         }
 
@@ -136,6 +151,7 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             clone.IsClone = true;
             clone.IsDelete = false;
             clone.OperationDate = DateTime.Now;
+            clone.CreateOrderBy();
             return clone;
         }
 

@@ -21,6 +21,11 @@ namespace Dewey.Dms.FileService.Hbase.Views
         {
             get => UserLastHistory.Login;
         }
+        
+        public string Password
+        {
+            get => UserLastHistory.Password;
+        }
 
         public string Name
         {
@@ -64,7 +69,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
         private User( List<UserHistory> history)
         {
             this.History = history;
-            UserLastHistory = history.Where(a => a.OperationDate == history.Max(b => b.OperationDate)).Single();
+            UserLastHistory = history.Where(a => a.OrderBy == history.Max(b => b.OrderBy)).Single();
          }
     }
 }

@@ -11,7 +11,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
     {
         private static string baseUrl = "http://localhost:9080";
 
-        public RestDatabaseServiceTests() : base(new RestDatabaseService(baseUrl, 1000))
+        public RestDatabaseServiceTests() : base(new RestDatabaseService(baseUrl))
         {
         }
         

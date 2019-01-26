@@ -1,6 +1,7 @@
 using System;
 using System.Data.Odbc;
 using System.Runtime.InteropServices.ComTypes;
+using System.Xml;
 using Dewey.HBase.Stargate.Client.Models;
 
 namespace Dewey.Dms.FileService.Hbase.Views
@@ -27,6 +28,8 @@ namespace Dewey.Dms.FileService.Hbase.Views
         public bool IsClone { get; set; }
         public bool IsChange { get; set; }
         public DateTime OperationDate { get; }
+        
+        public long OrderBy { get; }
 
         public FileHistory(OdbcDataReader reader)
         {
@@ -43,6 +46,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
             IsClone = reader.GetString(6) == "1";
             IsDelete = reader.GetString(7) == "1";
             OperationDate = reader.GetDateTime(8);
+            OrderBy = reader.GetInt64(9);
 
         }
         
@@ -61,6 +65,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
             IsClone = cellSet.GetBoolean("params", "is_clone");
             IsDelete = cellSet.GetBoolean("params", "is_delete");
             OperationDate = cellSet.GetDateTime("history", "operation_date");
+            OrderBy = cellSet.GetLong("history", "orderby");
 
         }
         

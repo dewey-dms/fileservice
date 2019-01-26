@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Dewey.Dms.FileService.Hbase.Views;
 
 namespace Dewey.Dms.FileService.Hbase.Operations
@@ -14,12 +15,21 @@ namespace Dewey.Dms.FileService.Hbase.Operations
         }
         
         public string Login { get; protected set; }
+        
+        public string Password { get; protected set; }
         public string Name { get; protected set; }
         public string SurName { get; protected set; }
         public bool IsDelete { get; protected set; }
         public bool IsChange { get; protected set; }
         public bool IsAdd { get; protected set; }
         public DateTime OperationDate { get; protected set; }
+        
+        public long OrderBy { get; private set; }
+
+        public void CreateOrderBy()
+        {
+            OrderBy =  (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+        }
 
        
     }
@@ -30,18 +40,21 @@ namespace Dewey.Dms.FileService.Hbase.Operations
         private AddUserOperations(){}
         
         
-        public static AddUserOperations CreateUserOperations(string login, string name, string surName)
+        public static AddUserOperations CreateUserOperations(string login, string password, string name, string surName)
         {
             AddUserOperations add = new AddUserOperations();
             add.KeyUser = Guid.NewGuid().ToString();
             add.KeyUserVersion = Guid.NewGuid().ToString();
             add.Login = login;
+            add.Password = password;
             add.Name = name;
             add.SurName = surName;
+            add.Password = password;
             add.IsAdd = true;
             add.IsDelete = false;
             add.IsChange = false;
             add.OperationDate = DateTime.Now;
+            add.CreateOrderBy();
             return add;
         }
     }
@@ -61,12 +74,14 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             change.KeyUserVersion = Guid.NewGuid().ToString();
             
             change.Login = user.Login;
+            change.Password = user.Password;
             change.Name = user.Name;
             change.SurName = user.SurName;
             change.IsAdd = false;
             change.IsDelete = false;
             change.IsChange = true;
             change.OperationDate = DateTime.Now;
+            change.CreateOrderBy();
             return change;
         }
 
@@ -87,6 +102,12 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             return this;
         }
         
+        public ChangeUserOperations ChangePassword(string password)
+        {
+            this.Password = password;
+            return this;
+        }
+        
     }
 
     public class DeleteUserOperations : UserOperations
@@ -103,12 +124,15 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             delete.KeyUserVersion = Guid.NewGuid().ToString();
             
             delete.Login = user.Login;
+            delete.Password = user.Password;
             delete.Name = user.Name;
+            
             delete.SurName = user.SurName;
             delete.IsAdd = false;
             delete.IsDelete = true;
             delete.IsChange = false;
             delete.OperationDate = DateTime.Now;
+            delete.CreateOrderBy();
             return delete;
         }
     }

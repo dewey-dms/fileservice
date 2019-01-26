@@ -49,6 +49,17 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             return AddColumnValue(column, qualifier, dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
         }
         
+        public HbaseRowFactory AddColumnIntValue(string column, string qualifier,int value)
+        {
+            return AddColumnValue(column, qualifier, value.ToString());
+        }
+        
+        public HbaseRowFactory AddColumnLongValue(string column, string qualifier,long value)
+        {
+            return AddColumnValue(column, qualifier, value.ToString());
+        }
+        
+        
         public CellSet MakeCellSet()
         {
                  

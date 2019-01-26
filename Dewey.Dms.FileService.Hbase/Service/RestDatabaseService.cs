@@ -11,21 +11,17 @@ namespace Dewey.Dms.FileService.Hbase.Service
     public class RestDatabaseService:IDatabaseService
     {
         public string BaseUrl { get; }
-        public int? SleepOperation;
+      
         public IStargate StargateApi;
 
-        public RestDatabaseService(string BaseUrl , int? sleepOperation = null)
+        public RestDatabaseService(string BaseUrl )
         {
             this.BaseUrl = BaseUrl;
             this.StargateApi = Stargate.Create(BaseUrl);
-            this.SleepOperation = sleepOperation;
+          
         }
 
-        private void RunSleepOperation()
-        {
-            if (SleepOperation.HasValue)
-                Thread.Sleep(SleepOperation.Value);
-        }
+      
         
         public bool DoUserOperations(UserOperations operations)
         {
@@ -33,16 +29,18 @@ namespace Dewey.Dms.FileService.Hbase.Service
             CellSet cellSet = 
                 HbaseRowFactory.CreateFactory("dewey_users", operations.Key)
                 .AddColumnStringValue("description", "login", operations.Login)
+                .AddColumnStringValue("description", "password", operations.Password)
                 .AddColumnStringValue("description", "name", operations.Name)
                 .AddColumnStringValue("description", "surname", operations.SurName)
                 .AddColumnBooleanValue("params", "is_add", operations.IsAdd)
                 .AddColumnBooleanValue("params", "is_change", operations.IsChange)
                 .AddColumnBooleanValue("params", "is_delete", operations.IsDelete)
                 .AddColumnDateTimeValue("history", "operation_date", operations.OperationDate)
+                .AddColumnLongValue("history", "orderby", operations.OrderBy)
                 .MakeCellSet();
             
              //StargateApi.WriteValue(operations.Name,"dewey_users",operations.Key, "description","name");
-             RunSleepOperation();
+           
              StargateApi.WriteCells(cellSet);
             
              return true;
@@ -119,13 +117,14 @@ namespace Dewey.Dms.FileService.Hbase.Service
                     .AddColumnBooleanValue("params", "is_change", operations.IsChange)
                     .AddColumnBooleanValue("params", "is_delete", operations.IsDelete)
                     .AddColumnBooleanValue("params", "is_clone", operations.IsClone)
-                    .AddColumnDateTimeValue("history", "operation_date", operations.OperationDate);
+                    .AddColumnDateTimeValue("history", "operation_date", operations.OperationDate)
+                    .AddColumnLongValue("history", "orderby", operations.OrderBy);
 
             if (!string.IsNullOrEmpty(operations.Parent))
                 factory = factory.AddColumnStringValue("params", "parent", operations.Parent);
 
             CellSet cellSet = factory.MakeCellSet();
-            RunSleepOperation();
+           
             StargateApi.WriteCells(cellSet);
             
             return true;

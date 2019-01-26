@@ -73,8 +73,41 @@ namespace Dewey.Dms.FileService.Hbase.Views
                 return null;
             return DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss", provider);
         }
-       
 
+
+        public static int GetInt(this CellSet cellSet, string column, string qualifier)
+        {
+            string value = GetValue(cellSet, column, qualifier);
+            
+            return int.Parse(value);
+          
+        }
+        public static int? GetIntNullable(this CellSet cellSet, string column, string qualifier)
+        {
+            string value = GetValue(cellSet, column, qualifier);
+            if (value == null)
+                return null;
+            return int.Parse(value);
+          
+        }
+        
+        
+        public static long GetLong(this CellSet cellSet, string column, string qualifier)
+        {
+            string value = GetValue(cellSet, column, qualifier);
+            
+            return long.Parse(value);
+          
+        }
+        public static long? GetLongNullable(this CellSet cellSet, string column, string qualifier)
+        {
+            string value = GetValue(cellSet, column, qualifier);
+            if (value == null)
+                return null;
+            return long.Parse(value);
+          
+        }
+        
 
     }
 }

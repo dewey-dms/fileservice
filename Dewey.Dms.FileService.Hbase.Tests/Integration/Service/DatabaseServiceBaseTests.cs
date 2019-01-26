@@ -34,8 +34,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             //HiveDatabaseService databaseService = new HiveDatabaseService(connectionString);
-            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
             bool resultAdd = sut.DoUserOperations(addOperations);
             
             // Act
@@ -50,6 +51,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(name,user.Name);
             Assert.AreEqual(surName,user.SurName);
             Assert.AreEqual(addOperations.Key,user.LongKey);
+            Assert.AreEqual(password,user.Password);
             Assert.IsFalse(user.IsDeleted);
 
         }
@@ -66,7 +68,8 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
-            AddUserOperations operations = AddUserOperations.CreateUserOperations(login, name, surName);
+            string password = "Password";
+            AddUserOperations operations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             
             //HiveDatabaseService databaseService = new HiveDatabaseService(connectionString);
             
@@ -88,8 +91,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
            // HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             bool resultAdd = sut.DoUserOperations(addOperations);
             
             
@@ -102,6 +106,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(name,user.Name);
             Assert.AreEqual(surName,user.SurName);
             Assert.AreEqual(addOperations.Key,user.LongKey);
+            Assert.AreEqual(password,user.Password);
             Assert.IsFalse(user.IsDeleted);
            
          }
@@ -113,8 +118,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
            // HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             bool resultAdd = sut.DoUserOperations(addOperations);
             User user = sut.GetUser(addOperations.KeyUser);
 
@@ -133,6 +139,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(name,userRead.Name);
             Assert.AreEqual(surName,userRead.SurName);
             Assert.AreEqual(deleteOperations.Key,userRead.LongKey);
+            Assert.AreEqual(password,user.Password);
             Assert.IsTrue(userRead.IsDeleted);
            
            
@@ -145,18 +152,22 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
             bool resultAdd = sut.DoUserOperations(addOperations);
             User user = sut.GetUser(addOperations.KeyUser);
             
             
             string newLogin = "Login2";
+            string newPassword = "Password2";
             string newName = "Name2";
             string newSurName = "SurName2";
+            
             ChangeUserOperations changeOperations = ChangeUserOperations.CreateUserOperations(user)
                 .ChangeName(newName)
                 .ChangeLogin(newLogin)
+                .ChangePassword(newPassword)
                 .ChangeSurName(newSurName);
             
             //Act
@@ -168,6 +179,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(newName,userRead.Name);
             Assert.AreEqual(newSurName,userRead.SurName);
             Assert.AreEqual(changeOperations.Key,userRead.LongKey);
+            Assert.AreEqual(password,user.Password);
             Assert.IsFalse(user.IsDeleted);
            
         }
@@ -184,8 +196,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             
-            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             bool resultAddUser = sut.DoUserOperations(addUserOperations);
             User user = sut.GetUser(addUserOperations.KeyUser);
@@ -217,8 +230,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             
-            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             bool resultAddUser = sut.DoUserOperations(addUserOperations);
             User user = sut.GetUser(addUserOperations.KeyUser);
@@ -255,8 +269,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             
-            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
            // HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             bool resultAddUser = sut.DoUserOperations(addUserOperations);
             User user = sut.GetUser(addUserOperations.KeyUser);
@@ -299,8 +314,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             
-            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             bool resultAddUser = sut.DoUserOperations(addUserOperations);
             User user = sut.GetUser(addUserOperations.KeyUser);
@@ -341,14 +357,15 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string login = "Login";
             string name = "Name";
             string surName = "SurName";
+            string password = "Password";
             
-            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             bool resultAddUser = sut.DoUserOperations(addUserOperations);
             User user = sut.GetUser(addUserOperations.KeyUser);
 
 
-            AddUserOperations addUserOperationsOther = AddUserOperations.CreateUserOperations(login, name, surName);
+            AddUserOperations addUserOperationsOther = AddUserOperations.CreateUserOperations(login, password , name, surName);
           
             bool resultAddUserOther = sut.DoUserOperations(addUserOperationsOther);
             User userOther = sut.GetUser(addUserOperationsOther.KeyUser);
