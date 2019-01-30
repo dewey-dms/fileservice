@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Dewey.Dms.FileService.Hbase.Operations;
 using Dewey.Dms.FileService.Hbase.Views;
 using Dewey.HBase.Stargate.Client.Api;
@@ -13,6 +14,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
         public string BaseUrl { get; }
       
         public IStargate StargateApi;
+        private IDatabaseService _databaseServiceImplementation;
 
         public RestDatabaseService(string BaseUrl )
         {
@@ -23,7 +25,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
 
       
         
-        public bool DoUserOperations(UserOperations operations)
+        public async Task DoUserOperations(UserOperations operations)
         {
             
             CellSet cellSet = 
@@ -41,12 +43,13 @@ namespace Dewey.Dms.FileService.Hbase.Service
             
              //StargateApi.WriteValue(operations.Name,"dewey_users",operations.Key, "description","name");
            
-             StargateApi.WriteCells(cellSet);
+             await StargateApi.WriteCellsAsync(cellSet);
             
-             return true;
+             
         }
 
-        public User GetUser(string key)
+        public async Task<User> GetUser(string key)
+        
         {
 
             List<UserHistory> userHistory =  new List<UserHistory>();
@@ -58,7 +61,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
                 Filter = new PrefixFilter(key)
             };
 
-            using(IScanner scanner = StargateApi.CreateScanner(scannerOptions))
+            using(IScanner scanner = await StargateApi.CreateScannerAsync(scannerOptions))
             {
            //     int count = scanner.Count();
            foreach (CellSet result in scanner)
@@ -72,7 +75,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
             return User.CreateUser(userHistory);
         }
 
-        public List<User> GetUsers(bool? isDelete = null)
+        public async Task<IEnumerable<User>> GetUsers(bool? isDelete = null)
         {
             List<UserHistory> userHistory = new List<UserHistory>();
 
@@ -83,7 +86,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
                 Filter = new PrefixFilter(string.Empty)
             };
 
-            using (IScanner scanner = StargateApi.CreateScanner(scannerOptions))
+            using (IScanner scanner = await StargateApi.CreateScannerAsync(scannerOptions))
             {
                 //     int count = scanner.Count();
                 foreach (CellSet result in scanner)
@@ -103,11 +106,11 @@ namespace Dewey.Dms.FileService.Hbase.Service
             if (isDelete.HasValue)
                 users = users.Where(a => a.IsDeleted == isDelete);
 
-            return users.ToList();
+            return users;
 
         }
 
-        public bool DoFileOperations(FileOperations operations)
+        public async Task DoFileOperations(FileOperations operations)
         {
             HbaseRowFactory factory =
                 HbaseRowFactory.CreateFactory("dewey_files", operations.Key)
@@ -125,13 +128,13 @@ namespace Dewey.Dms.FileService.Hbase.Service
 
             CellSet cellSet = factory.MakeCellSet();
            
-            StargateApi.WriteCells(cellSet);
+            await StargateApi.WriteCellsAsync(cellSet);
             
-            return true;
+            //return true;
 
         }
 
-        public File GetFile(string key)
+        public async Task<File> GetFile(string key)
         {
             List<FileHistory> fileHistory =  new List<FileHistory>();
             
@@ -142,7 +145,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
                 Filter = new PrefixFilter(key)
             };
 
-            using(IScanner scanner = StargateApi.CreateScanner(scannerOptions))
+            using(IScanner scanner = await StargateApi.CreateScannerAsync(scannerOptions))
             {
                 //     int count = scanner.Count();
                 foreach (CellSet result in scanner)
@@ -155,6 +158,40 @@ namespace Dewey.Dms.FileService.Hbase.Service
             }
 
             return File.CreateFile(fileHistory);
+        }
+
+        public async Task<IEnumerable<File>> GetUserFile(string userKey, bool? isDelete = null)
+        {
+            List<FileHistory> fileHistory =  new List<FileHistory>();
+            
+            //throw new System.NotImplementedException();
+            var scannerOptions = new ScannerOptions
+            {
+                TableName = "dewey_files",
+                Filter = new PrefixFilter(userKey),
+             };
+
+            using(IScanner scanner = await StargateApi.CreateScannerAsync(scannerOptions))
+            {
+                //     int count = scanner.Count();
+                foreach (CellSet result in scanner)
+                {
+                    fileHistory.AddRange(
+                        result.GroupBy(a => a.Identifier.Row).Select(a =>
+                            new FileHistory(a.Key, new CellSet(a))
+                        ));
+                }
+                IEnumerable<File> files =
+                    fileHistory
+                        .GroupBy(a => a.KeyUserFile)
+                        .Select(a => File.CreateFile(a.ToList()));
+                    
+                if (isDelete.HasValue)
+                    files = files.Where(a => a.IsDeleted == isDelete);
+                    
+                return files;
+            }
+
         }
     }
 }

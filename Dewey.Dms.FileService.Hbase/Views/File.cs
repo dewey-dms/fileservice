@@ -14,7 +14,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
 
         public string Key
         {
-            get => $"{KeyFile}|{KeyUser}";
+            get => $"{KeyUser}|{KeyFile}";
 
         }
 
@@ -53,6 +53,12 @@ namespace Dewey.Dms.FileService.Hbase.Views
 
         }
 
+        public bool IsCloned
+        {
+            get => History.Any(a => a.IsClone);
+        }
+        
+        
         public List<FileHistory> History { get; } 
         private FileHistory FileLastHistory { get; }
 
@@ -63,10 +69,10 @@ namespace Dewey.Dms.FileService.Hbase.Views
             if (history != null && history.Count > 0)
             {
                 
-                if (history.Select(a=>a.KeyFileUser).Distinct().Count()>1)
+                if (history.Select(a=>a.KeyUserFile).Distinct().Count()>1)
                     throw new Exception($"History not the same file");
 
-                string fileKey = history.First().KeyFileUser;
+                string fileKey = history.First().KeyUserFile;
                 
                 if (history.Count(a => a.IsClone) > 1)
                     throw new Exception($"To many clone operation in file {fileKey}");

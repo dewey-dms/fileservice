@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Odbc;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Dewey.Dms.FileService.Hbase.Operations;
 using Dewey.Dms.FileService.Hbase.Views;
 
@@ -27,7 +28,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
             return dt.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
-        public bool DoUserOperations(UserOperations operations)
+        public async Task DoUserOperations(UserOperations operations)
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -60,12 +61,12 @@ namespace Dewey.Dms.FileService.Hbase.Service
                          '{operations.Password}'
                       )";
                     com.ExecuteNonQuery();
-                    return true;
+                    //return true;
                 }
             }
         }
 
-        public User GetUser(string key)
+        public async Task<User> GetUser(string key)
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -97,7 +98,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
 
 
 
-        public List<User> GetUsers(bool? isDelete = null)
+        public async Task<IEnumerable<User>> GetUsers(bool? isDelete = null)
         {
 
             using (var con = new OdbcConnection(ConnectionString))
@@ -128,6 +129,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
 
                     IEnumerable<User> users =
                         userHistory
+                            .Where(a=>a!=null)
                             .GroupBy(a => a.UserKey)
                             .Select(a => User.CreateUser(a.ToList()));
 
@@ -140,7 +142,7 @@ namespace Dewey.Dms.FileService.Hbase.Service
         }
 
 
-        public bool DoFileOperations(FileOperations operations)
+        public async Task DoFileOperations(FileOperations operations)
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -175,13 +177,13 @@ namespace Dewey.Dms.FileService.Hbase.Service
                     '{FormatDateTimeToTimestamp(operations.OperationDate)}',
                     {operations.OrderBy} )";
                     com.ExecuteNonQuery();    
-                    return true;
+                    //return true;
                 }
             }
 
         }
 
-        public File GetFile(string key)
+        public async Task<File> GetFile(string key)
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -209,6 +211,47 @@ namespace Dewey.Dms.FileService.Hbase.Service
                     return File.CreateFile(fileHistory);
 
 
+                }
+            }
+        }
+
+        public async Task<IEnumerable<File>> GetUserFile(string userKey, bool? isDelete = null)
+        {
+            using (var con = new OdbcConnection(ConnectionString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {    
+                    com.CommandText = $@"select 
+                    key ,
+                    filename ,
+                    extension ,
+                    parent,
+                    is_add ,
+                    is_change ,
+                    is_clone ,
+                    is_delete ,
+                    operation_date ,
+                    orderby
+                    from
+                    dewey_files where key like '{userKey}|%'";
+                    OdbcDataReader reader = com.ExecuteReader();
+                    //reader.Read();
+                    List<FileHistory> fileHistory = new List<FileHistory>();
+                    while(reader.Read())
+                        fileHistory.Add(new FileHistory(reader));
+                    
+                    
+                    IEnumerable<File> files =
+                        fileHistory
+                            .Where(a=>a!=null)
+                            .GroupBy(a => a.KeyUserFile)
+                            .Select(a => File.CreateFile(a.ToList()));
+                    
+                    if (isDelete.HasValue)
+                        files = files.Where(a => a.IsDeleted == isDelete);
+                    
+                    return files;
                 }
             }
         }

@@ -87,7 +87,12 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
         {
             base.CloneFile_RunAddUserAndAddFileAndCloneFile_AndResultDeleteFile();
         }
-        
+
+        [TestMethod] 
+        public new void GetFileUser_RunAddUserAndAddFile_AndResultListFile()
+        {
+            base.GetFileUser_RunAddUserAndAddFile_AndResultListFile();
+        }
         
     }
 }

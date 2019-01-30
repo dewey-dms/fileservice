@@ -1,5 +1,6 @@
 using System;
 using System.Data.Odbc;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Xml;
 using Dewey.HBase.Stargate.Client.Models;
@@ -14,11 +15,17 @@ namespace Dewey.Dms.FileService.Hbase.Views
         
         public string KeyFile { get;  }
         public string KeyUser { get;  }
-        public string KeyFileUser
+        
+        public string KeyUserFile
         {
-            get => $"{KeyFile}|{KeyUser}";
+            get => $"{KeyUser}|{KeyFile}";
         }
         
+        
+        /*public string KeyFileUser
+        {
+            get => $"{KeyFile}|{KeyUser}";
+        }*/
         
         public string Parent { get; }
         public string FileName { get; }
@@ -35,7 +42,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
         {
             LongKey = reader.GetString(0);
 
-            (KeyFile, KeyUser, Key) = GetKeys(LongKey);
+            (KeyUser, KeyFile, Key) = GetKeys(LongKey);
             
             FileName = reader.GetString(1);
             Extension = reader.GetString(2);
@@ -54,7 +61,7 @@ namespace Dewey.Dms.FileService.Hbase.Views
         {
             LongKey = key;
 
-            (KeyFile, KeyUser, Key) = GetKeys(LongKey);
+            (KeyUser, KeyFile, Key) = GetKeys(LongKey);
             FileName =  cellSet.GetString("description", "filename");
             Extension = cellSet.GetString("description", "extension");
             

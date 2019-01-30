@@ -37,13 +37,13 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string password = "Password";
             //HiveDatabaseService databaseService = new HiveDatabaseService(connectionString);
             AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
-            bool resultAdd = sut.DoUserOperations(addOperations);
+            sut.DoUserOperations(addOperations).Wait();
             
             // Act
-            List<User> users =  sut.GetUsers();
+            List<User> users =  sut.GetUsers().Result.ToList();
             
             // Assert
-            Assert.IsTrue(resultAdd);
+            //Assert.IsTrue(resultAdd);
             Assert.IsTrue(users.Count>0);
             User user = users.Where(a => a.Key == addOperations.KeyUser).SingleOrDefault();
             Assert.IsNotNull(user);
@@ -74,10 +74,10 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             //HiveDatabaseService databaseService = new HiveDatabaseService(connectionString);
             
             //Act
-            bool result = sut.DoUserOperations(operations);
+            sut.DoUserOperations(operations).Wait();;
             
             //Assert
-            Assert.IsTrue(result);
+            //Assert.IsTrue(result);
             
         }
         
@@ -94,14 +94,14 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string password = "Password";
            // HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
-            bool resultAdd = sut.DoUserOperations(addOperations);
+            sut.DoUserOperations(addOperations).Wait();;
             
             
             //Act
-            User user = sut.GetUser(addOperations.KeyUser);
+            User user = sut.GetUser(addOperations.KeyUser).Result;
             
             //Assert
-            Assert.IsTrue(resultAdd);
+            
             Assert.AreEqual(login, user.Login);
             Assert.AreEqual(name,user.Name);
             Assert.AreEqual(surName,user.SurName);
@@ -121,19 +121,18 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string password = "Password";
            // HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
-            bool resultAdd = sut.DoUserOperations(addOperations);
-            User user = sut.GetUser(addOperations.KeyUser);
+            sut.DoUserOperations(addOperations).Wait();;
+            User user = sut.GetUser(addOperations.KeyUser).Result;
 
             DeleteUserOperations deleteOperations = DeleteUserOperations.CreateUserOperations(user);
             
             
             //Act
-            bool resultDelete = sut.DoUserOperations(deleteOperations);
+             sut.DoUserOperations(deleteOperations);
             
             //Assert
-            User userRead = sut.GetUser(addOperations.KeyUser);
-            Assert.IsTrue(resultAdd);
-            Assert.IsTrue(resultDelete);
+            User userRead = sut.GetUser(addOperations.KeyUser).Result;
+           
            
             Assert.AreEqual(login, userRead.Login);
             Assert.AreEqual(name,userRead.Name);
@@ -155,8 +154,8 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             string password = "Password";
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
             AddUserOperations addOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
-            bool resultAdd = sut.DoUserOperations(addOperations);
-            User user = sut.GetUser(addOperations.KeyUser);
+          sut.DoUserOperations(addOperations).Wait();;
+            User user = sut.GetUser(addOperations.KeyUser).Result;
             
             
             string newLogin = "Login2";
@@ -171,10 +170,10 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
                 .ChangeSurName(newSurName);
             
             //Act
-            bool resultChange = sut.DoUserOperations(changeOperations);
+           sut.DoUserOperations(changeOperations).Wait();;
             
             //Assert
-            User userRead = sut.GetUser(addOperations.KeyUser);
+            User userRead = sut.GetUser(addOperations.KeyUser).Result;
             Assert.AreEqual(newLogin, userRead.Login);
             Assert.AreEqual(newName,userRead.Name);
             Assert.AreEqual(newSurName,userRead.SurName);
@@ -200,8 +199,8 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             
             AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            bool resultAddUser = sut.DoUserOperations(addUserOperations);
-            User user = sut.GetUser(addUserOperations.KeyUser);
+            sut.DoUserOperations(addUserOperations).Wait();;
+            User user = sut.GetUser(addUserOperations.KeyUser).Result;
 
 
             string fileName = "filename";
@@ -209,12 +208,11 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
             
             //Act
-            bool resultAddFile = sut.DoFileOperations(addFileOperations);
+            sut.DoFileOperations(addFileOperations).Wait();;
             
             //Assert
-            Assert.IsTrue(resultAddUser);
             Assert.IsNotNull(user);
-            Assert.IsTrue(resultAddFile);
+           
             
         }
         
@@ -234,32 +232,31 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             
             AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            bool resultAddUser = sut.DoUserOperations(addUserOperations);
-            User user = sut.GetUser(addUserOperations.KeyUser);
+            sut.DoUserOperations(addUserOperations).Wait();;
+            User user = sut.GetUser(addUserOperations.KeyUser).Result;
 
 
             string fileName = "filename";
             string extension = "extension";
             AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
             //Act
-            bool resultAddFile = sut.DoFileOperations(addFileOperations);
+            sut.DoFileOperations(addFileOperations).Wait();;
             
             //Assert
-            File file = sut.GetFile(addFileOperations.KeyFileUser);
+            File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
             
             
             
             //Assert
-            Assert.IsTrue(resultAddUser);
             Assert.IsNotNull(user);
-            Assert.IsTrue(resultAddFile);
             Assert.IsNotNull(file);
             Assert.AreEqual(fileName, file.FileName);
             Assert.AreEqual(extension,file.Extension);
             Assert.AreEqual(addFileOperations.KeyUser,file.KeyUser);
-            Assert.AreEqual(addFileOperations.KeyFileUser,  file.Key);
+            Assert.AreEqual(addFileOperations.KeyUserFile,  file.Key);
             Assert.AreEqual(addFileOperations.Key, file.LongKey);
             Assert.IsFalse(file.IsDeleted);
+            Assert.IsFalse(file.IsCloned);
 
         }
         
@@ -273,37 +270,35 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             
             AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
            // HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            bool resultAddUser = sut.DoUserOperations(addUserOperations);
-            User user = sut.GetUser(addUserOperations.KeyUser);
+            sut.DoUserOperations(addUserOperations).Wait();;
+            User user = sut.GetUser(addUserOperations.KeyUser).Result;
 
 
             string fileName = "filename";
             string extension = "extension";
             AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
-            bool resultAddFile = sut.DoFileOperations(addFileOperations);
+            sut.DoFileOperations(addFileOperations).Wait();;
            
-            File file = sut.GetFile(addFileOperations.KeyFileUser);
+            File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
             string newFileName = "filename2";
             string newExtension = "extension2";
             ChangeFileOperations changeFileOperations = ChangeFileOperations.CreateFileOperations(file)
                 .ChangeFileName(newFileName).ChangeExtension(newExtension);
 
             //Act
-            bool resultChangeFile = sut.DoFileOperations(changeFileOperations);
+            sut.DoFileOperations(changeFileOperations).Wait();;
 
             // Assert
-            File fileRead = sut.GetFile(changeFileOperations.KeyFileUser);
-            Assert.IsTrue(resultAddUser);
-            Assert.IsTrue(resultAddFile);
-            Assert.IsTrue(resultChangeFile);
-            
+            File fileRead = sut.GetFile(changeFileOperations.KeyUserFile).Result;
+           
             Assert.AreEqual(newFileName, fileRead.FileName);
             Assert.AreEqual(newExtension,fileRead.Extension);
            
             Assert.AreEqual(changeFileOperations.KeyUser,fileRead.KeyUser);
-            Assert.AreEqual(changeFileOperations.KeyFileUser,  fileRead.Key);
+            Assert.AreEqual(changeFileOperations.KeyUserFile,  fileRead.Key);
             Assert.AreEqual(changeFileOperations.Key, fileRead.LongKey);
             Assert.IsFalse(fileRead.IsDeleted);
+            Assert.IsFalse(fileRead.IsCloned);
         }
         
         
@@ -318,36 +313,35 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             
             AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password,name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            bool resultAddUser = sut.DoUserOperations(addUserOperations);
-            User user = sut.GetUser(addUserOperations.KeyUser);
+            sut.DoUserOperations(addUserOperations).Wait();;
+            User user = sut.GetUser(addUserOperations.KeyUser).Result;
 
 
             string fileName = "filename";
             string extension = "extension";
             AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
-            bool resultAddFile = sut.DoFileOperations(addFileOperations);
+             sut.DoFileOperations(addFileOperations).Wait();;
            
-            File file = sut.GetFile(addFileOperations.KeyFileUser);
+            File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
            
             DeleteFileOperations deleteFileOperations = DeleteFileOperations.CreateFileOperations(file);
                 
 
             //Act
-            bool resultDeleteFile = sut.DoFileOperations(deleteFileOperations);
+           sut.DoFileOperations(deleteFileOperations).Wait();
 
             // Assert
-            File fileRead = sut.GetFile(deleteFileOperations.KeyFileUser);
-            Assert.IsTrue(resultAddUser);
-            Assert.IsTrue(resultAddFile);
-            Assert.IsTrue(resultDeleteFile);
+            File fileRead = sut.GetFile(deleteFileOperations.KeyUserFile).Result;
+           
             
             Assert.AreEqual(fileName, fileRead.FileName);
             Assert.AreEqual(extension,fileRead.Extension);
            
             Assert.AreEqual(deleteFileOperations.KeyUser,fileRead.KeyUser);
-            Assert.AreEqual(deleteFileOperations.KeyFileUser,  fileRead.Key);
+            Assert.AreEqual(deleteFileOperations.KeyUserFile,  fileRead.Key);
             Assert.AreEqual(deleteFileOperations.Key, fileRead.LongKey);
             Assert.IsTrue(fileRead.IsDeleted);
+            Assert.IsFalse(fileRead.IsCloned);
         }
 
 
@@ -361,46 +355,90 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             
             AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
             //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
-            bool resultAddUser = sut.DoUserOperations(addUserOperations);
-            User user = sut.GetUser(addUserOperations.KeyUser);
+            sut.DoUserOperations(addUserOperations).Wait();;
+            User user = sut.GetUser(addUserOperations.KeyUser).Result;
 
 
             AddUserOperations addUserOperationsOther = AddUserOperations.CreateUserOperations(login, password , name, surName);
           
-            bool resultAddUserOther = sut.DoUserOperations(addUserOperationsOther);
-            User userOther = sut.GetUser(addUserOperationsOther.KeyUser);
+            sut.DoUserOperations(addUserOperationsOther).Wait();;
+            User userOther = sut.GetUser(addUserOperationsOther.KeyUser).Result;
             
             
             string fileName = "filename";
             string extension = "extension";
             AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
-            bool resultAddFile = sut.DoFileOperations(addFileOperations);
+             sut.DoFileOperations(addFileOperations).Wait();
            
-            File file = sut.GetFile(addFileOperations.KeyFileUser);
+            File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
 
             CloneFileOperations cloneFileOperations = CloneFileOperations.CreateFileOperations(file, userOther);
                 
 
             //Act
-            bool resultCloneFile = sut.DoFileOperations(cloneFileOperations);
+           sut.DoFileOperations(cloneFileOperations).Wait();
 
             // Assert
-            File fileRead = sut.GetFile(cloneFileOperations.KeyFileUser);
-            Assert.IsTrue(resultAddUser);
-            
-            
-            Assert.IsTrue(resultAddFile);
-            Assert.IsTrue(resultAddUserOther);
-            Assert.IsTrue(resultCloneFile);
+            File fileRead = sut.GetFile(cloneFileOperations.KeyUserFile).Result;
+        
             
             Assert.AreEqual(fileName, fileRead.FileName);
             Assert.AreEqual(extension,fileRead.Extension);
            
             Assert.AreEqual(cloneFileOperations.KeyUser,fileRead.KeyUser);
-            Assert.AreEqual(cloneFileOperations.KeyFileUser,  fileRead.Key);
+            Assert.AreEqual(cloneFileOperations.KeyUserFile,  fileRead.Key);
             Assert.AreEqual(cloneFileOperations.Key, fileRead.LongKey);
             Assert.IsFalse(fileRead.IsDeleted);
+            Assert.IsTrue(fileRead.IsCloned);
             Assert.AreEqual(addFileOperations.Key,  fileRead.Parent);
         }
+        
+        
+        
+        public void GetFileUser_RunAddUserAndAddFile_AndResultListFile()
+        {
+            
+            //Assign
+            
+            
+            
+            string login = "Login";
+            string name = "Name";
+            string surName = "SurName";
+            string password = "Password";
+            
+            AddUserOperations addUserOperations = AddUserOperations.CreateUserOperations(login, password, name, surName);
+            //HiveDatabaseService databaseService = new  HiveDatabaseService(connectionString);
+            sut.DoUserOperations(addUserOperations).Wait();;
+            User user = sut.GetUser(addUserOperations.KeyUser).Result;
+
+
+            string fileName = "filename";
+            string extension = "extension";
+            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            //Act
+            sut.DoFileOperations(addFileOperations).Wait();;
+            
+            //Assert
+            IEnumerable<File> files = sut.GetUserFile(addFileOperations.KeyUser).Result;
+            
+            
+            
+            //Assert
+            Assert.IsNotNull(user);
+            Assert.IsNotNull(files);
+            File file = files.SingleOrDefault();
+
+            Assert.IsNotNull(file);
+            Assert.AreEqual(fileName, file.FileName);
+            Assert.AreEqual(extension,file.Extension);
+            Assert.AreEqual(addFileOperations.KeyUser,file.KeyUser);
+            Assert.AreEqual(addFileOperations.KeyUserFile,  file.Key);
+            Assert.AreEqual(addFileOperations.Key, file.LongKey);
+            Assert.IsFalse(file.IsDeleted);
+            Assert.IsFalse(file.IsCloned);
+
+        }
+        
     }
 }

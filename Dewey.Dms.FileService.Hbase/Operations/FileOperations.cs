@@ -8,13 +8,16 @@ namespace Dewey.Dms.FileService.Hbase.Operations
     {
         public string Key
         {
-            get => $"{KeyFile}|{KeyUser}|{KeyFileVersion}";
+            get => $"{KeyUser}|{KeyFile}|{KeyFileVersion}";
         }
         
-        public string KeyFileUser
+        public string KeyUserFile
         {
-            get => $"{KeyFile}|{KeyUser}";
-        }
+            get => $"{KeyUser}|{KeyFile}";
+        }   
+            
+// $"{KeyFile}|{KeyUser}";
+        
 
         public string KeyUser { get; protected set; }
         public string KeyFile { get; protected set; }

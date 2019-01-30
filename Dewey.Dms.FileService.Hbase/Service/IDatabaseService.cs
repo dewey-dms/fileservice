@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dewey.Dms.FileService.Hbase.Operations;
 using Dewey.Dms.FileService.Hbase.Views;
 
@@ -6,10 +7,13 @@ namespace Dewey.Dms.FileService.Hbase.Service
 {
     public interface IDatabaseService
     {
-       bool DoUserOperations(UserOperations operations);
-       User GetUser(string key);
-       List<User> GetUsers(bool? isDelete = null);
-       bool DoFileOperations(FileOperations operations);
-       File GetFile(string key);
+       Task DoUserOperations(UserOperations operations);
+       Task<User> GetUser(string key);
+       Task<IEnumerable<User>> GetUsers(bool? isDelete = null);
+       Task DoFileOperations(FileOperations operations);
+       Task<File> GetFile(string key);
+
+       Task<IEnumerable<File>> GetUserFile(string userKey, bool? isDelete = null);
+
     }
 }

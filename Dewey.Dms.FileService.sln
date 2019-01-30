@@ -10,6 +10,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dewey.Dms.FileService.Hbase
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dewey.HBase.Stargate.Client", "Dewey.HBase.Stargate.Client\Dewey.HBase.Stargate.Client.csproj", "{08176CC5-9BE0-47D4-989D-D6E3966FEAC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dewey.Dms.IdentityProvider", "Dewey.Dms.IdentityProvider\Dewey.Dms.IdentityProvider.csproj", "{08E3AAAD-F9A3-4B7D-AEAE-A7C8EAB32B2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dewey.Dms.FileService.Api", "Dewey.Dms.FileService.Api\Dewey.Dms.FileService.Api.csproj", "{CA69868F-8B1B-4B34-A36A-649CCFEC2552}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dewey.Dms.FileService.Services", "Dewey.Dms.FileService.Services\Dewey.Dms.FileService.Services.csproj", "{1EC45CCD-20F8-4653-8593-DBE4AFCB75FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +42,17 @@ Global
 		{08176CC5-9BE0-47D4-989D-D6E3966FEAC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08176CC5-9BE0-47D4-989D-D6E3966FEAC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08176CC5-9BE0-47D4-989D-D6E3966FEAC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08E3AAAD-F9A3-4B7D-AEAE-A7C8EAB32B2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08E3AAAD-F9A3-4B7D-AEAE-A7C8EAB32B2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08E3AAAD-F9A3-4B7D-AEAE-A7C8EAB32B2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08E3AAAD-F9A3-4B7D-AEAE-A7C8EAB32B2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA69868F-8B1B-4B34-A36A-649CCFEC2552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA69868F-8B1B-4B34-A36A-649CCFEC2552}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA69868F-8B1B-4B34-A36A-649CCFEC2552}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA69868F-8B1B-4B34-A36A-649CCFEC2552}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EC45CCD-20F8-4653-8593-DBE4AFCB75FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC45CCD-20F8-4653-8593-DBE4AFCB75FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC45CCD-20F8-4653-8593-DBE4AFCB75FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC45CCD-20F8-4653-8593-DBE4AFCB75FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
