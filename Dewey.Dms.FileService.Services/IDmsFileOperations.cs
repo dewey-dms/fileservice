@@ -7,12 +7,13 @@ namespace Dewey.Dms.FileService.Services
 {
     public interface IDmsFileOperations
     {
-         Task<ResultService<IEnumerable<File>>>GetUserFile(IFileServiceLogger fileServicelogger , string userKey, bool? isDelete = null);
-         Task<ResultService<File>> GetFile(IFileServiceLogger fileServicelogger , string userKey , string userFileKey);
+         Task<ResultService<IEnumerable<File>>>GetInfoFilesToUser(IFileServiceLogger fileServicelogger , string userKey, bool? isDelete = null);
+         Task<ResultService<File>> GetInfoFile(IFileServiceLogger fileServicelogger , string userKey , string userFileKey);
 
-         Task<ResultService<File>> AddFile(IFileServiceLogger fileServiceLogger, string userKey, Stream stream,
+         Task<ResultService<File>> AddFileToUser(IFileServiceLogger fileServiceLogger, string userKey, Stream stream,
              string fileName, string extension);
-
-
+        
+        Task<ResultService<(File File, Stream Stream)>> GetFileToUser(IFileServiceLogger fileServiceLogger, string userKey , string userFilekey);
+        
     }
 }

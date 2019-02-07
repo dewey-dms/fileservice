@@ -2,17 +2,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Dewey.Dms.FileService.Api.Models.View;
-using File = Dewey.Dms.FileService.Api.Models.View.File;
+using File = Dewey.Dms.FileService.Api.Models.View.FileRest;
 
 namespace Dewey.Dms.FileService.Api.Repository
 {
     public interface IFileUserRepository
     {
-        Task<ResultRest<List<File>>> GetFilesToUser(string userKey);
+        Task<ResultRest<List<FileRest>>> GetInfoFilesToUser(string userKey);
 
-        Task<ResultRest<File>> GetFile(string userKey, string userFileKey);
+        Task<ResultRest<FileRest>> GetInfoFile(string userKey, string userFileKey);
 
-        Task<ResultRest<File>> AddFile(string userKey, Stream stream, string fileName, string extension);
+        Task<ResultRest<FileRest>> AddFileToUser(string userKey, Stream stream, string fileName, string extension);
+        
+        
+        Task<ResultRest<(Dewey.Dms.FileService.Hbase.Views.File File,Stream Stream)>> GetFileToUser(string userKey, string userFileKey);
 
     }
 }

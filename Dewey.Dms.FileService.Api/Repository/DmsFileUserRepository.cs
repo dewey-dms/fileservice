@@ -6,7 +6,7 @@ using Dewey.Dms.FileService.Api.Models.View;
 using Dewey.Dms.FileService.Hbase.Service;
 using Dewey.Dms.FileService.Services;
 using Microsoft.Extensions.Logging;
-using File = Dewey.Dms.FileService.Api.Models.View.File;
+using File = Dewey.Dms.FileService.Api.Models.View.FileRest;
 
 namespace Dewey.Dms.FileService.Api.Repository
 {
@@ -23,35 +23,42 @@ namespace Dewey.Dms.FileService.Api.Repository
         }
 
 
-        public async Task<ResultRest<List<File>>> GetFilesToUser(string userKey)
+        public async Task<ResultRest<List<FileRest>>> GetInfoFilesToUser(string userKey)
         {
-           _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.GetFileToUser(userKey={userKey}");
+           _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.GetInfoFilesToUser(userKey={userKey}");
            //IEnumerable<Dewey.Dms.FileService.Hbase.Views.File> files = await _databaseService.GetUserFile(userKey, isDelete: false);
 
            ResultService<IEnumerable<Dewey.Dms.FileService.Hbase.Views.File>> result =
-               await _databaseService.GetUserFile(_serviceLogger,userKey, isDelete: false);
+               await _databaseService.GetInfoFilesToUser(_serviceLogger,userKey, isDelete: false);
 
-           return new ResultRest<List<File>>(result.Map<List<File>>(a => a.Select(b=>new File(b)).ToList())
+           return new ResultRest<List<FileRest>>(result.Map<List<FileRest>>(a => a.Select(b=>new FileRest(b)).ToList())
                .Ensure(a=>a.Count>0,"List files is empty"));
         }
         
         
-        public async Task<ResultRest<File>> GetFile(string userKey , string userFileKey)
+        public async Task<ResultRest<FileRest>> GetInfoFile(string userKey , string userFileKey)
         {
-            _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.GetFile(userFileKey={userFileKey}");
-             ResultService<Dewey.Dms.FileService.Hbase.Views.File> result = await _databaseService.GetFile(_serviceLogger,userKey, userFileKey);
-             return new ResultRest<File>(result.Map<File>(a=> new File(a)));
+            _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.GetInfoFile(userFileKey={userFileKey} , userFileKey= {userFileKey})");
+             ResultService<Dewey.Dms.FileService.Hbase.Views.File> result = await _databaseService.GetInfoFile(_serviceLogger,userKey, userFileKey);
+             return new ResultRest<FileRest>(result.Map<FileRest>(a=> new FileRest(a)));
         }
 
 
-        public async Task<ResultRest<File>> AddFile(string userKey, Stream stream, string fileName, string extension)
+        public async Task<ResultRest<FileRest>> AddFileToUser(string userKey, Stream stream, string fileName, string extension)
         {
-            _logger.Log(LogLevel.Information, message:$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.AddFile(userFile={userKey},fileName={fileName},extensions={extension}");
+            _logger.Log(LogLevel.Information, message:$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.AddFileToUser(userFile={userKey},fileName={fileName},extensions={extension}");
             ResultService<Dewey.Dms.FileService.Hbase.Views.File> result =
-                await _databaseService.AddFile(_serviceLogger, userKey, stream, fileName, extension);
-            return new ResultRest<File>(result.Map<File>(a=>new File(a)));
+                await _databaseService.AddFileToUser(_serviceLogger, userKey, stream, fileName, extension);
+            return new ResultRest<FileRest>(result.Map<FileRest>(a=>new FileRest(a)));
         }
-        
-        
-      }
+
+        public async Task<ResultRest<(Dewey.Dms.FileService.Hbase.Views.File File,Stream Stream)>> GetFileToUser(string userKey, string userFileKey)
+        {
+            _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.GetFileToUser(userFileKey={userFileKey} , userFileKey= {userFileKey})");
+            ResultService<(Dewey.Dms.FileService.Hbase.Views.File,Stream)> result =
+                await _databaseService.GetFileToUser(_serviceLogger, userKey, userFileKey);
+            return new ResultRest<(Dewey.Dms.FileService.Hbase.Views.File,Stream)>(result);
+
+        }
+    }
 }

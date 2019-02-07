@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Dewey.Dms.FileService.Api.Repository;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -45,7 +47,8 @@ namespace Dewey.Dms.FileService.Api
                 hbaseSection.Where(a => a.Key == "RestAddress").Select(a => a.Value).SingleOrDefault();
 
             string webHdfsAddress = hdfsSection.Where(a => a.Key == "WebHdfsAddress").Select(a=>a.Value).SingleOrDefault();
-            
+
+            //services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
             if (!string.IsNullOrEmpty(hbaseRestAddress) && !string.IsNullOrEmpty(webHdfsAddress))
             {
                 services.AddSingleton<IDatabaseService>(new RestDatabaseService(hbaseRestAddress));
