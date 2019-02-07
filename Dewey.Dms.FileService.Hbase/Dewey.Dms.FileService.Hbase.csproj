@@ -9,6 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Dewey.Dms.Core\Dewey.Dms.Core.csproj" />
       <ProjectReference Include="..\Dewey.HBase.Stargate.Client\Dewey.HBase.Stargate.Client.csproj" />
     </ItemGroup>
 

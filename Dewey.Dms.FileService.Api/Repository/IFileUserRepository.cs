@@ -8,7 +8,7 @@ namespace Dewey.Dms.FileService.Api.Repository
 {
     public interface IFileUserRepository
     {
-        Task<ResultRest<List<FileRest>>> GetInfoFilesToUser(string userKey);
+        Task<ResultRest<List<FileRest>>> GetInfoFilesToUser(string userKey,bool? isDelete =null);
 
         Task<ResultRest<FileRest>> GetInfoFile(string userKey, string userFileKey);
 
@@ -16,6 +16,8 @@ namespace Dewey.Dms.FileService.Api.Repository
         
         
         Task<ResultRest<(Dewey.Dms.FileService.Hbase.Views.File File,Stream Stream)>> GetFileToUser(string userKey, string userFileKey);
+
+        Task<ResultRest<FileRest>> DeleteFileToUser(string userKey, string userFileKey);
 
     }
 }

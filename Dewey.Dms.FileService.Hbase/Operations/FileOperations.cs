@@ -1,6 +1,7 @@
 using System;
 using System.Security.Cryptography;
 using Dewey.Dms.FileService.Hbase.Views;
+using Dewey.Dms.Core;
 
 namespace Dewey.Dms.FileService.Hbase.Operations
 {
@@ -47,8 +48,14 @@ namespace Dewey.Dms.FileService.Hbase.Operations
     
     public class AddFileOperations:FileOperations
     {
-        public static AddFileOperations CreateFileOperations(User user, string fileName, string extension)
+        public static ResultService<AddFileOperations> CreateFileOperations(User user, string fileName, string extension)
         {
+            if (string.IsNullOrEmpty(fileName))
+                return ResultService<AddFileOperations>.Error($"Filename is empty");
+            
+            if (string.IsNullOrEmpty(extension))
+                return ResultService<AddFileOperations>.Error($"Extension is empty");
+            
             AddFileOperations add = new AddFileOperations();
             add.KeyUser = user.Key;
             add.KeyFile = Guid.NewGuid().ToString();
@@ -62,17 +69,21 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             add.IsDelete = false;
             add.OperationDate = DateTime.Now;
             add.CreateOrderBy();
-            return add;
+            return ResultService<AddFileOperations>.Ok(add);
         }
     }
 
     public class ChangeFileOperations : FileOperations
     {
 
-        public static ChangeFileOperations CreateFileOperations(File file)
+        public static ResultService<ChangeFileOperations> CreateFileOperations(File file )
         {
+            if (file == null)
+                return ResultService<ChangeFileOperations>.Error($"File parametr is null");
+            
             if (file.IsDeleted)
-                throw new Exception($"Can't change deleted file {file.Key}");
+                //throw new Exception($"Can't change deleted file {file.Key}");
+                return ResultService<ChangeFileOperations>.Error($"Can't change deleted file {file.Key}");
             
             ChangeFileOperations change = new ChangeFileOperations();
             change.KeyUser = file.KeyUser;
@@ -87,19 +98,25 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             change.IsDelete = false;
             change.OperationDate = DateTime.Now;
             change.CreateOrderBy();
-            return change;
+            return ResultService<ChangeFileOperations>.Ok(change);
         }
 
-        public ChangeFileOperations ChangeFileName(string fileName)
+        public ResultService<ChangeFileOperations> ChangeFileName(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                return ResultService<ChangeFileOperations>.Error($"Filename is null");
             this.FileName = fileName;
-            return this;
+            
+            return ResultService<ChangeFileOperations>.Ok(this);
         }
 
-        public ChangeFileOperations ChangeExtension(string extension)
+        public ResultService<ChangeFileOperations> ChangeExtension(string extension)
         {
+            if (string.IsNullOrEmpty(extension))
+                return ResultService<ChangeFileOperations>.Error($"Extension is null");
+            
             this.Extension = extension;
-            return this;
+            return ResultService<ChangeFileOperations>.Ok(this);
         }
     }
     
@@ -109,10 +126,15 @@ namespace Dewey.Dms.FileService.Hbase.Operations
         
         
 
-        public static DeleteFileOperations CreateFileOperations(File file)
+        public static ResultService<DeleteFileOperations> CreateFileOperations(File file)
         {
+            
+            if (file == null)
+                return ResultService<DeleteFileOperations>.Error($"File parametr is null");
+            
+            
             if (file.IsDeleted)
-                throw new Exception($"Can't delete deleted file {file.Key}");
+                ResultService<DeleteFileOperations>.Error($"Can't delete deleted file {file.Key}");
             
             DeleteFileOperations delete = new DeleteFileOperations();
             delete.KeyUser = file.KeyUser;
@@ -127,7 +149,7 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             delete.IsDelete = true;
             delete.OperationDate = DateTime.Now;
             delete.CreateOrderBy();
-            return delete;
+            return  ResultService<DeleteFileOperations>.Ok(delete);
         }
 
         
@@ -137,10 +159,15 @@ namespace Dewey.Dms.FileService.Hbase.Operations
     public class CloneFileOperations : FileOperations
     {
 
-        public static CloneFileOperations CreateFileOperations(File file , User user)
+        public static ResultService<CloneFileOperations> CreateFileOperations(File file , User user)
         {
+            
+            if (file == null)
+                return ResultService<CloneFileOperations>.Error($"File parametr is null");
+            
             if (file.IsDeleted)
-                throw new Exception($"Can't clone deleted file {file.Key}");
+                //    throw new Exception($"Can't clone deleted file {file.Key}");
+                return ResultService<CloneFileOperations>.Error($"Can't clone deleted file {file.Key}");
             
             CloneFileOperations clone = new CloneFileOperations();
             clone.KeyUser = user.Key;
@@ -155,7 +182,7 @@ namespace Dewey.Dms.FileService.Hbase.Operations
             clone.IsDelete = false;
             clone.OperationDate = DateTime.Now;
             clone.CreateOrderBy();
-            return clone;
+            return ResultService<CloneFileOperations>.Ok(clone);
         }
 
         

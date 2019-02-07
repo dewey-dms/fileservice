@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace Dewey.Dms.FileService.Services
+namespace Dewey.Dms.Core
 {
     public class ResultService<T>
     {

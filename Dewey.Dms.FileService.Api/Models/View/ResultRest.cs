@@ -1,5 +1,6 @@
 using System;
 using Dewey.Dms.FileService.Services;
+using Dewey.Dms.Core;
 
 namespace Dewey.Dms.FileService.Api.Models.View
 {

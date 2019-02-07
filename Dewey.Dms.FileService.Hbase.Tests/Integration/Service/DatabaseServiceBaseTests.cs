@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -5,6 +6,8 @@ using Dewey.Dms.FileService.Hbase.Operations;
 using Dewey.Dms.FileService.Hbase.Service;
 using Dewey.Dms.FileService.Hbase.Views;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+ using Dewey.Dms.Core;
 
 namespace Dewey.Dms.FileService.Hive.Tests.Integration
 {
@@ -205,10 +208,14 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
 
             string fileName = "filename";
             string extension = "extension";
-            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            ResultService<AddFileOperations> addFileOperations = AddFileOperations
+                .CreateFileOperations(user, fileName, extension)
+                .OnError(a=>throw new Exception(a));
             
             //Act
-            sut.DoFileOperations(addFileOperations).Wait();;
+            //sut.DoFileOperations(addFileOperations).Wait();;
+            addFileOperations.OnSuccess(a => sut.DoFileOperations(a).Wait());
+            
             
             //Assert
             Assert.IsNotNull(user);
@@ -238,8 +245,9 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
 
             string fileName = "filename";
             string extension = "extension";
-            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension).OnError(a=>throw new Exception(a)).Value;
             //Act
+            
             sut.DoFileOperations(addFileOperations).Wait();;
             
             //Assert
@@ -277,14 +285,17 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
 
             string fileName = "filename";
             string extension = "extension";
-            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension).OnError(a=>throw new Exception(a)).Value;;
             sut.DoFileOperations(addFileOperations).Wait();;
            
             File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
             string newFileName = "filename2";
             string newExtension = "extension2";
             ChangeFileOperations changeFileOperations = ChangeFileOperations.CreateFileOperations(file)
-                .ChangeFileName(newFileName).ChangeExtension(newExtension);
+                .OnError(a=>throw new Exception(a)).Value
+                .ChangeFileName(newFileName)
+                .OnError(a=>throw new Exception(a)).Value
+                .ChangeExtension(newExtension).OnError(a=>throw new Exception(a)).Value;;
 
             //Act
             sut.DoFileOperations(changeFileOperations).Wait();;
@@ -321,12 +332,12 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
 
             string fileName = "filename";
             string extension = "extension";
-            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension).OnError(a=>throw new Exception(a)).Value;;
              sut.DoFileOperations(addFileOperations).Wait();;
            
             File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
            
-            DeleteFileOperations deleteFileOperations = DeleteFileOperations.CreateFileOperations(file);
+            DeleteFileOperations deleteFileOperations = DeleteFileOperations.CreateFileOperations(file).OnError(a=>throw new Exception(a)).Value;;
                 
 
             //Act
@@ -370,12 +381,12 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             
             string fileName = "filename";
             string extension = "extension";
-            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension).OnError(a=>throw new Exception(a)).Value;;
              sut.DoFileOperations(addFileOperations).Wait();
            
             File file = sut.GetFile(addFileOperations.KeyUserFile).Result;
 
-            CloneFileOperations cloneFileOperations = CloneFileOperations.CreateFileOperations(file, userOther);
+            CloneFileOperations cloneFileOperations = CloneFileOperations.CreateFileOperations(file, userOther).OnError(a=>throw new Exception(a)).Value;;
                 
 
             //Act
@@ -419,7 +430,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
 
             string fileName = "filename";
             string extension = "extension";
-            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+            AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension).OnError(a=>throw new Exception(a)).Value;;
             //Act
             sut.DoFileOperations(addFileOperations).Wait();;
             

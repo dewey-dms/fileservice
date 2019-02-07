@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Dewey.Dms.Core\Dewey.Dms.Core.csproj" />
       <ProjectReference Include="..\Dewey.Dms.FileService.Hbase\Dewey.Dms.FileService.Hbase.csproj" />
       <ProjectReference Include="..\Dewey.Dms.FileService.Hdfs\Dewey.Dms.FileService.Hdfs.csproj" />
     </ItemGroup>

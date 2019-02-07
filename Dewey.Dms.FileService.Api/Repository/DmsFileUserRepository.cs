@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Dewey.Dms.Core;
 using Dewey.Dms.FileService.Api.Models.View;
 using Dewey.Dms.FileService.Hbase.Service;
 using Dewey.Dms.FileService.Services;
@@ -23,13 +24,13 @@ namespace Dewey.Dms.FileService.Api.Repository
         }
 
 
-        public async Task<ResultRest<List<FileRest>>> GetInfoFilesToUser(string userKey)
+        public async Task<ResultRest<List<FileRest>>> GetInfoFilesToUser(string userKey,bool? isDelete=null)
         {
            _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.GetInfoFilesToUser(userKey={userKey}");
            //IEnumerable<Dewey.Dms.FileService.Hbase.Views.File> files = await _databaseService.GetUserFile(userKey, isDelete: false);
 
            ResultService<IEnumerable<Dewey.Dms.FileService.Hbase.Views.File>> result =
-               await _databaseService.GetInfoFilesToUser(_serviceLogger,userKey, isDelete: false);
+               await _databaseService.GetInfoFilesToUser(_serviceLogger,userKey, isDelete: isDelete);
 
            return new ResultRest<List<FileRest>>(result.Map<List<FileRest>>(a => a.Select(b=>new FileRest(b)).ToList())
                .Ensure(a=>a.Count>0,"List files is empty"));
@@ -59,6 +60,13 @@ namespace Dewey.Dms.FileService.Api.Repository
                 await _databaseService.GetFileToUser(_serviceLogger, userKey, userFileKey);
             return new ResultRest<(Dewey.Dms.FileService.Hbase.Views.File,Stream)>(result);
 
+        }
+
+        public async Task<ResultRest<FileRest>> DeleteFileToUser(string userKey, string userFileKey)
+        {
+            _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.DeleteFileToUser(userFileKey={userFileKey} , userFileKey= {userFileKey})");
+             ResultService<Dewey.Dms.FileService.Hbase.Views.File> result= await _databaseService.DeleteFileToUser(_serviceLogger, userKey, userFileKey);
+            return new ResultRest<FileRest>(result.Map<FileRest>(a=> new FileRest(a)));
         }
     }
 }

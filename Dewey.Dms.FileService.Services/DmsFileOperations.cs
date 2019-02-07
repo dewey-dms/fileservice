@@ -8,6 +8,7 @@ using Dewey.Dms.FileService.Hbase.Service;
 using Dewey.Dms.FileService.Hbase.Views;
 using Dewey.Dms.FileService.Hdfs.Client;
 using File = Dewey.Dms.FileService.Hbase.Views.File;
+using Dewey.Dms.Core;
 
 
 namespace Dewey.Dms.FileService.Services
@@ -40,7 +41,18 @@ namespace Dewey.Dms.FileService.Services
                     return ResultService<File>.Error($"No such user {userKey}");
                 }
 
-                AddFileOperations addFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+                ResultService<AddFileOperations> resultAddFileOperations = AddFileOperations.CreateFileOperations(user, fileName, extension);
+                if (resultAddFileOperations.IsError)
+                {
+                    fileServiceLogger.LogInfo(
+                        $"Dewey.Dms.FileService.Services.AddFileToUser(userKey={userKey},fileName={fileName},extension={extension}) - {resultAddFileOperations.ErrorMessage}");
+
+                    return ResultService<File>.Error(resultAddFileOperations.ErrorMessage);
+                }
+
+                AddFileOperations addFileOperations = resultAddFileOperations.Value;
+                
+                
                 bool result = await _hdfsClient.WriteStream(stream, $"/dewey/{addFileOperations.Key}");
                 if (!result)
                 {
@@ -70,6 +82,60 @@ namespace Dewey.Dms.FileService.Services
             }
         }
 
+        public async Task<ResultService<File>> DeleteFileToUser(IFileServiceLogger fileServiceLogger, string userKey, string userFileKey)
+        {
+            try
+            {
+                User user = await _databaseService.GetUser(userKey);
+                if (user == null)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}) - no such user");
+                    return ResultService<File>.Error($"No such user {userKey}");
+                }
+
+                File file = await _databaseService.GetFile(userFileKey);
+                if (file == null)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}: No such file");
+                    return ResultService<File>.Error("No such file");
+                }
+
+                if (file.KeyUser != userKey)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}: Permission denied to file");
+                    return ResultService<File>.Error("No such file");
+                }
+
+                ResultService<DeleteFileOperations> resultDeleteFileOperations =
+                    DeleteFileOperations.CreateFileOperations(file);
+                if (resultDeleteFileOperations.IsError)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}: {resultDeleteFileOperations.ErrorMessage}");
+                    return ResultService<File>.Error(resultDeleteFileOperations.ErrorMessage);
+                }
+
+                DeleteFileOperations deleteFileOperations = resultDeleteFileOperations.Value;
+                await _databaseService.DoFileOperations(deleteFileOperations);
+                
+                
+                File fileDelete = await _databaseService.GetFile(userFileKey);
+                
+                return ResultService<File>.Ok(fileDelete);
+
+            }
+            catch (Exception ex)
+            {
+                fileServiceLogger.LogError(
+                     $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}",ex);
+                return ResultService<File>.Error("Internal server error");
+            }
+        }
+
+
         public async Task<ResultService<(File File,Stream Stream)>> GetFileToUser(IFileServiceLogger fileServiceLogger, string userKey, string userFileKey)
         {
             fileServiceLogger.LogInfo($"Dewey.Dms.FileService.Services.GetFileToUser(userKey={userKey},userFileKey={userFileKey}");
@@ -92,7 +158,14 @@ namespace Dewey.Dms.FileService.Services
                         $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}: No such file");
                     return ResultService<(File,Stream)>.Error("No such file");
                 }
-
+                    
+                if (file.KeyUser != userKey)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}: Perimission denied");
+                    return ResultService<(File,Stream)>.Error("No such file");
+                }
+                
                 MemoryStream streamToRead = new MemoryStream();
                 streamToRead.Position = 0;
 
@@ -183,7 +256,7 @@ namespace Dewey.Dms.FileService.Services
         }
         
         
-        //public async Task<ResultService<Stream>> GetFile
+     
         
         
     }

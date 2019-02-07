@@ -33,7 +33,7 @@ namespace Dewey.Dms.FileService.Api.Controllers
             _logger.Log(LogLevel.Information, $"Dewey.Dms.FileService.Api.Controllers.DmsController.GetInfoFilesToUser(userKey={userKey}".ToString());
             try
             {
-               var value = await _fileUserRepository.GetInfoFilesToUser(GetLoggedUserKey());
+               var value = await _fileUserRepository.GetInfoFilesToUser(GetLoggedUserKey(),false);
               
                 return Ok(value);
 
@@ -44,6 +44,26 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             
         }
+        
+        [HttpGet("files/info/all")]
+        public async Task<IActionResult> GetInfoFilesToUserAll()
+        {
+            string userKey = GetLoggedUserKey();
+            _logger.Log(LogLevel.Information, $"Dewey.Dms.FileService.Api.Controllers.DmsController.GetInfoFilesToUserAll(userKey={userKey})".ToString());
+            try
+            {
+                var value = await _fileUserRepository.GetInfoFilesToUser(GetLoggedUserKey());
+              
+                return Ok(value);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            
+        }
+        
         
         [HttpGet("files/info/{userFileKey}")]
         public async Task<IActionResult> GetInfoFile(string userFileKey)
@@ -65,10 +85,7 @@ namespace Dewey.Dms.FileService.Api.Controllers
             
         }
 
-        public class TestFile
-        {
-            public IFormFile file { get; set; }
-        }
+      
         
         [HttpPost("files")]
         public async Task<IActionResult> AddFileToUser([FromForm(Name="file")] IFormFile formFile)
@@ -99,7 +116,7 @@ namespace Dewey.Dms.FileService.Api.Controllers
         public async Task<IActionResult> GetFile(string userFileKey)
         {
             string userKey = GetLoggedUserKey();
-            _logger.Log(LogLevel.Information, $"Dewey.Dms.FileService.Api.Controllers.DmsController.GetInfoFile(userKey={userKey} , fileKey={userFileKey})");
+            _logger.Log(LogLevel.Information, $"Dewey.Dms.FileService.Api.Controllers.DmsController.GetFile(userKey={userKey} , fileKey={userFileKey})");
 
             try
             {
@@ -113,7 +130,26 @@ namespace Dewey.Dms.FileService.Api.Controllers
                 return BadRequest();
             }
         }
+        
+        
+        [HttpDelete("files/{userFileKey}")]
+        public async Task<IActionResult> DeleteFile(string userFileKey)
+        {
+            string userKey = GetLoggedUserKey();
+            _logger.Log(LogLevel.Information, $"Dewey.Dms.FileService.Api.Controllers.DmsController.DeleteFile(userKey={userKey} , fileKey={userFileKey})");
 
+            try
+            {
+                ResultRest<FileRest> value = await _fileUserRepository.DeleteFileToUser(userKey, userFileKey);
+                if (value.IsError)
+                    return Ok(value);
+                return Ok(value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
         
         
         
