@@ -255,6 +255,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(addFileOperations.KeyUser,file.KeyUser);
             Assert.AreEqual(addFileOperations.KeyUserFile,  file.Key);
             Assert.AreEqual(addFileOperations.Key, file.LongKey);
+            Assert.AreEqual(addFileOperations.OperationDate.ToString("yyyy-MM-dd HH:mm:ss"),file.LastOperationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             Assert.IsFalse(file.IsDeleted);
             Assert.IsFalse(file.IsCloned);
 
@@ -297,6 +298,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(changeFileOperations.KeyUser,fileRead.KeyUser);
             Assert.AreEqual(changeFileOperations.KeyUserFile,  fileRead.Key);
             Assert.AreEqual(changeFileOperations.Key, fileRead.LongKey);
+            Assert.AreEqual(changeFileOperations.OperationDate.ToString("yyyy-MM-dd HH:mm:ss"),file.LastOperationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             Assert.IsFalse(fileRead.IsDeleted);
             Assert.IsFalse(fileRead.IsCloned);
         }
@@ -340,6 +342,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(deleteFileOperations.KeyUser,fileRead.KeyUser);
             Assert.AreEqual(deleteFileOperations.KeyUserFile,  fileRead.Key);
             Assert.AreEqual(deleteFileOperations.Key, fileRead.LongKey);
+            Assert.AreEqual(deleteFileOperations.OperationDate.ToString("yyyy-MM-dd HH:mm:ss"),file.LastOperationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             Assert.IsTrue(fileRead.IsDeleted);
             Assert.IsFalse(fileRead.IsCloned);
         }
@@ -388,6 +391,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(cloneFileOperations.KeyUser,fileRead.KeyUser);
             Assert.AreEqual(cloneFileOperations.KeyUserFile,  fileRead.Key);
             Assert.AreEqual(cloneFileOperations.Key, fileRead.LongKey);
+            Assert.AreEqual(cloneFileOperations.OperationDate.ToString("yyyy-MM-dd HH:mm:ss"),file.LastOperationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             Assert.IsFalse(fileRead.IsDeleted);
             Assert.IsTrue(fileRead.IsCloned);
             Assert.AreEqual(addFileOperations.Key,  fileRead.Parent);
@@ -435,6 +439,7 @@ namespace Dewey.Dms.FileService.Hive.Tests.Integration
             Assert.AreEqual(addFileOperations.KeyUser,file.KeyUser);
             Assert.AreEqual(addFileOperations.KeyUserFile,  file.Key);
             Assert.AreEqual(addFileOperations.Key, file.LongKey);
+            Assert.AreEqual(addFileOperations.OperationDate.ToString("yyyy-MM-dd HH:mm:ss"),file.LastOperationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             Assert.IsFalse(file.IsDeleted);
             Assert.IsFalse(file.IsCloned);
 

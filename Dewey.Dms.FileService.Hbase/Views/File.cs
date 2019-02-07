@@ -61,7 +61,12 @@ namespace Dewey.Dms.FileService.Hbase.Views
         
         public List<FileHistory> History { get; } 
         private FileHistory FileLastHistory { get; }
-
+        
+        public DateTime LastOperationDate
+        {
+            get => FileLastHistory.OperationDate;
+        }
+        
 
         public static File CreateFile  ( List<FileHistory> history)
         {

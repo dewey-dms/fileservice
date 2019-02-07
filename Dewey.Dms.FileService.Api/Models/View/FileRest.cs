@@ -10,6 +10,8 @@ namespace Dewey.Dms.FileService.Api.Models.View
         public bool IsDeleted;
         public string Key { get;  }
         public string OwnerKey { get; }
+        
+        public DateTime LastOperationDate { get;}
 
         public FileRest(Dewey.Dms.FileService.Hbase.Views.File file)
         {
@@ -19,6 +21,7 @@ namespace Dewey.Dms.FileService.Api.Models.View
             this.OwnerKey = file.KeyUser;
             this.IsDeleted = file.IsDeleted;
             this.IsCloned = file.IsCloned;
+            this.LastOperationDate = file.LastOperationDate;
         }
     }
 }
