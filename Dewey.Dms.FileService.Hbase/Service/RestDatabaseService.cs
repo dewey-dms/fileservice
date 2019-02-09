@@ -14,7 +14,6 @@ namespace Dewey.Dms.FileService.Hbase.Service
         public string BaseUrl { get; }
       
         public IStargate StargateApi;
-        private IDatabaseService _databaseServiceImplementation;
 
         public RestDatabaseService(string BaseUrl )
         {

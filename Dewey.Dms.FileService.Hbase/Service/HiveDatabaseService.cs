@@ -28,7 +28,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
             return dt.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
+#pragma warning disable 1998
         public async Task DoUserOperations(UserOperations operations)
+#pragma warning restore 1998
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -66,7 +68,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
             }
         }
 
+#pragma warning disable 1998
         public async Task<User> GetUser(string key)
+#pragma warning restore 1998
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -98,7 +102,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
 
 
 
+#pragma warning disable 1998
         public async Task<IEnumerable<User>> GetUsers(bool? isDelete = null)
+#pragma warning restore 1998
         {
 
             using (var con = new OdbcConnection(ConnectionString))
@@ -142,7 +148,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
         }
 
 
+#pragma warning disable 1998
         public async Task DoFileOperations(FileOperations operations)
+#pragma warning restore 1998
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -183,7 +191,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
 
         }
 
+#pragma warning disable 1998
         public async Task<File> GetFile(string key)
+#pragma warning restore 1998
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
@@ -215,7 +225,9 @@ namespace Dewey.Dms.FileService.Hbase.Service
             }
         }
 
+#pragma warning disable 1998
         public async Task<IEnumerable<File>> GetUserFile(string userKey, bool? isDelete = null)
+#pragma warning restore 1998
         {
             using (var con = new OdbcConnection(ConnectionString))
             {
