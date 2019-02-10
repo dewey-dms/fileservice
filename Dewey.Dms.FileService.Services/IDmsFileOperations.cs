@@ -16,6 +16,9 @@ namespace Dewey.Dms.FileService.Services
 
          Task<ResultService<File>> DeleteFileToUser(IFileServiceLogger fileServiceLogger, string userKey,
              string userFileKey);
+
+         Task<ResultService<File>> ChangeFileToUser(IFileServiceLogger fileServiceLogger, string userKey,
+             string userFileKey, Stream stream, string fileName, string extension);
          
         Task<ResultService<(File File, Stream Stream)>> GetFileToUser(IFileServiceLogger fileServiceLogger, string userKey , string userFilekey);
         

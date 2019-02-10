@@ -40,6 +40,8 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             catch (Exception ex)
             {
+                
+                _logger.Log(LogLevel.Error,$"Dewey.Dms.FileService.Api.Controllers.DmsController.GetInfoFilesToUser(userKey={userKey}",ex);
                 return BadRequest();
             }
             
@@ -59,6 +61,8 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error,$"Dewey.Dms.FileService.Api.Controllers.DmsController.GetInfoFilesToUserAll(userKey={userKey})",ex);
+
                 return BadRequest();
             }
             
@@ -80,12 +84,38 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error,$"Dewey.Dms.FileService.Api.Controllers.DmsController.GetInfoFile(userKey={userKey} , fileKey={userFileKey})",ex);
                 return BadRequest();
             }
             
         }
-
+       
       
+        
+        [HttpPut("files/{userFileKey}")]
+        public async Task<IActionResult> ChangeFileToUser(string userFileKey, 
+            [FromForm(Name="file")] IFormFile formFile)
+        {
+
+            string userKey = GetLoggedUserKey();
+            string fileName = formFile.FileName;
+            string extension = "application/octet-stream";
+            
+            _logger.Log(LogLevel.Information,
+                $"Dewey.Dms.FileService.Api.Controllers.DmsController.ChangeFileToUser(userKey={userKey} , userFileKey={userFileKey}, fileName = {fileName}, extension={extension})");
+
+            try
+            {
+                var value = await _fileUserRepository.ChangeFileToUser(userKey, userFileKey , formFile.OpenReadStream(), fileName, extension);
+                return Ok(value);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error,$"Dewey.Dms.FileService.Api.Controllers.DmsController.ChangeFileToUser(userKey={userKey} , userFileKey={userFileKey}, fileName = {fileName}, extension={extension})",ex);
+                return BadRequest();
+            }
+        }
+        
         
         [HttpPost("files")]
         public async Task<IActionResult> AddFileToUser([FromForm(Name="file")] IFormFile formFile)
@@ -107,10 +137,14 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error,$"Dewey.Dms.FileService.Api.Controllers.DmsController.AddFileToUser(userKey={userKey} , fileName = {fileName}, extension={extension})",ex);
                 return BadRequest();
             }
         }
 
+        
+        
+        
 
         [HttpGet("files/{userFileKey}")]
         public async Task<IActionResult> GetFile(string userFileKey)
@@ -127,6 +161,7 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error,$"Dewey.Dms.FileService.Api.Controllers.DmsController.GetFile(userKey={userKey} , fileKey={userFileKey})",ex);
                 return BadRequest();
             }
         }
@@ -147,6 +182,7 @@ namespace Dewey.Dms.FileService.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error,"Dewey.Dms.FileService.Api.Controllers.DmsController.DeleteFile(userKey={userKey} , fileKey={userFileKey})",ex);
                 return BadRequest();
             }
         }

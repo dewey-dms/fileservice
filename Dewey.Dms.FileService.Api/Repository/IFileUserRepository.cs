@@ -19,5 +19,10 @@ namespace Dewey.Dms.FileService.Api.Repository
 
         Task<ResultRest<FileRest>> DeleteFileToUser(string userKey, string userFileKey);
 
+
+        Task<ResultRest<FileRest>> ChangeFileToUser(string userKey, string userFileKey, Stream stream, string fileName,
+            string extension);
+
+
     }
 }

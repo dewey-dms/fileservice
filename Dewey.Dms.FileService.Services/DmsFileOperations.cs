@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Dewey.Dms.FileService.Hbase.Operations;
 using Dewey.Dms.FileService.Hbase.Service;
@@ -26,6 +27,77 @@ namespace Dewey.Dms.FileService.Services
            
         }
 
+        public async Task<ResultService<File>> ChangeFileToUser(IFileServiceLogger fileServiceLogger, string userKey,
+            string userFileKey, Stream stream, string fileName, string extension)
+        {
+            fileServiceLogger.LogInfo($"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey}, fileName={fileName},extension={extension})");
+            try
+            {
+                User user = await _databaseService.GetUser(userKey);
+                if (user == null)
+                {
+                    fileServiceLogger.LogInfo(
+                        $"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension}) - no such user");
+
+                    return ResultService<File>.Error($"No such user {userKey}");
+                }
+                
+                File file = await _databaseService.GetFile(userFileKey);
+                if (file == null)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension}): No such file");
+                    return ResultService<File>.Error("No such file");
+                }
+
+                if (file.KeyUser != userKey)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension}): Permission denied to file");
+                    return ResultService<File>.Error("No such file");
+                }
+
+                ResultService<ChangeFileOperations> resultChangeFileOperations =
+                    ChangeFileOperations.CreateFileOperations(file)
+                        .NextResult(a=>a.ChangeFileName(fileName))
+                        .NextResult(a=>a.ChangeExtension(extension));
+                
+                ChangeFileOperations changeFileOperations = resultChangeFileOperations.Value;
+                
+                if (resultChangeFileOperations.IsError)
+                {
+                    
+                        fileServiceLogger.LogDebug(
+                            $"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension}): {resultChangeFileOperations.ErrorMessage}");
+                    return ResultService<File>.Error(resultChangeFileOperations.ErrorMessage);
+                }
+                bool result = await _hdfsClient.WriteStream(stream, $"/dewey/{changeFileOperations.Key}");
+                if (!result)
+                {
+                    fileServiceLogger.LogInfo(
+                        $"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension}):- problem writing file");
+                    return ResultService<File>.Error($"Internal server error");
+                }
+                await _databaseService.DoFileOperations(changeFileOperations);
+                File fileChange = await _databaseService.GetFile(changeFileOperations.KeyUserFile);
+                if (fileChange ==null)
+                {
+                    fileServiceLogger.LogInfo(
+                        $"Dewey.Dms.FileService.Services.ChangeFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension}):- problem with read updating file");
+                    return ResultService<File>.Error($"Internal server error");
+
+                 } 
+                return ResultService<File>.Ok(fileChange);
+
+            }
+            catch (Exception ex)
+            {
+                fileServiceLogger.LogError(
+                    $"Dewey.Dms.FileService.Services.AddFileToUser(userKey={userKey}, userFileKey={userFileKey},fileName={fileName},extension={extension})",ex);
+                return ResultService<File>.Error("Internal server error");
+            }
+        } 
+        
         public async Task<ResultService<File>> AddFileToUser(IFileServiceLogger fileServiceLogger , string userKey, Stream stream, string fileName, string extension)
         {
             fileServiceLogger.LogInfo($"Dewey.Dms.FileService.Services.AddFileToUser(userKey={userKey},fileName={fileName},extension={extension})");
@@ -123,6 +195,13 @@ namespace Dewey.Dms.FileService.Services
                 
                 
                 File fileDelete = await _databaseService.GetFile(userFileKey);
+                if (fileDelete == null)
+                {
+                    fileServiceLogger.LogDebug(
+                        $"Dewey.Dms.FileService.Services.GetInfoFile(userKey={userKey},userFileKey={userFileKey}: Problem with reading deleted file");
+                    return ResultService<File>.Error("Internal Error");
+                }
+                
                 
                 return ResultService<File>.Ok(fileDelete);
 

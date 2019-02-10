@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -68,5 +69,14 @@ namespace Dewey.Dms.FileService.Api.Repository
              ResultService<Dewey.Dms.FileService.Hbase.Views.File> result= await _databaseService.DeleteFileToUser(_serviceLogger, userKey, userFileKey);
             return new ResultRest<FileRest>(result.Map<FileRest>(a=> new FileRest(a)));
         }
+        
+        public async Task<ResultRest<FileRest>> ChangeFileToUser(string userKey, string userFileKey,Stream stream , string fileName , string extension)
+   
+        {
+            _logger.Log(LogLevel.Information,$"Dewey.Dms.FileService.Api.Repository.HbaseFileUserRepository.ChangeFileToUser(userFileKey={userFileKey} , userFileKey= {userFileKey}, fileName={fileName}, extension = {extension})");
+            ResultService<Dewey.Dms.FileService.Hbase.Views.File> result= await _databaseService.ChangeFileToUser(_serviceLogger, userKey, userFileKey, stream,fileName,extension);
+            return new ResultRest<FileRest>(result.Map<FileRest>(a=> new FileRest(a)));
+        }
+        
     }
 }

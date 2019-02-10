@@ -66,7 +66,14 @@ namespace Dewey.Dms.Core
 
             return this;
         }
-        
+
+        public ResultService<T> NextResult(Func<T, ResultService<T>> function)
+        {
+            if (IsError)
+                return this;
+            
+            return function(Value);
+        }
         
         
         
